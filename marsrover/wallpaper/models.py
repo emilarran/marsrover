@@ -27,10 +27,12 @@ from django.utils import timezone
 
 class Image(models.Model):
     sol = models.IntegerField()
-    camera_id = models.IntegerField()
     earth_date = models.DateField()
-    img_src = models.CharField(max_length=500)
-    date_saved = models.DateField()
+    img_src = models.URLField(max_length=500)
+    date_saved = models.DateTimeField()
+
+    def __str__(self):
+        return self.img_src
 
     def was_saved_recently(self):
         now = timezone.now()
