@@ -40,12 +40,12 @@ class HomeView(TemplateView):
 class Something(View):
     def get(self, request, **kwargs):
         now = timezone.now()
-        datestart = now - datetime.timedelta(0, 43200, 0)
+        datestart = now - datetime.timedelta(0, 10, 0)
         param = Image.objects.filter(date_saved__range=(datestart, now))
         if not param:
             def curiosityrover():
                 x = random.randint(1,1980)
-                y = random.randint(0,25)
+                y = random.randint(0,24)
                 url = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol="+`x`+"&page=1"
                 app_token = "ApEztOfnuLutAfibTJmSuorcTQMHxQkozbocepVm"
                 payload = {'api_key': app_token}
