@@ -6,10 +6,33 @@
 		background-image: url("{{img_src}}");
 	</style>
 </head>
-<body>
-    <img src={{ img_src }} style="width: 50%; height: 55%;" />
+<body id='bod'>
+    <img src="" style="width: 50%; height: 55%;" id=""/>
+    <button>This is a button</button>
 </body>
 <script type="text/javascript">
-    
+fetch('http://localhost:8000/wallpaper/get-image/')
+    .then(
+        function(response) {
+            if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' +
+                    response.status);
+                alert('Looks like there was a problem. Status Code: ' +
+                    response.status)
+                return;
+            }
+            // Examine the text in the response
+            response.json().then(function(data) {
+                console.log(data);
+                console.log(data['img_src']);
+                document.getElementById('bod').style.backgroundImage = "url("+data['img_src']+")";
+            });
+        }
+    )
+    .catch(function(err) {
+        console.log('Fetch Error :-S', err);
+    }
+);
+
 </script>
 </html>
