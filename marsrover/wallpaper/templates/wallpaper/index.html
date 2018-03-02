@@ -1,38 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Home</title>
-	<style type="text/css">
-		background-image: url("{{img_src}}");
-	</style>
-</head>
-<body id='bod'>
-    <img src="" style="width: 50%; height: 55%;" id=""/>
+{% extends 'base.html' %}
+{% block head %}
+    <title>Home</title>
+    <style type="text/css">
+    </style>
+{% endblock %}
+{% block body %}
+    <h1>Emil Arran Baleva</h1>
     <button>This is a button</button>
-</body>
-<script type="text/javascript">
-fetch('http://localhost:8000/wallpaper/get-image/')
-    .then(
-        function(response) {
-            if (response.status !== 200) {
-                console.log('Looks like there was a problem. Status Code: ' +
-                    response.status);
-                alert('Looks like there was a problem. Status Code: ' +
-                    response.status)
-                return;
-            }
-            // Examine the text in the response
-            response.json().then(function(data) {
-                console.log(data);
-                console.log(data['img_src']);
-                document.getElementById('bod').style.backgroundImage = "url("+data['img_src']+")";
-            });
-        }
-    )
-    .catch(function(err) {
-        console.log('Fetch Error :-S', err);
-    }
-);
-
-</script>
-</html>
+{% endblock %}
+{% block script %}
+    {% load static %}
+    <script src="{% static 'wallpaper/fetch.js' %}"></script>
+{% endblock %}
