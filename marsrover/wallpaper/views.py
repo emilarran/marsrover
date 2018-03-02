@@ -11,6 +11,7 @@ import json
 from django.utils import timezone
 import datetime
 from django.views.generic import TemplateView, View
+import random
 # Create your views here.
 
 
@@ -41,31 +42,45 @@ class HomeView(TemplateView):
 
 class Something(View):
     def get(self, request, **kwargs):
-        # now = timezone.now()
-        # datestart = now - datetime.timedelta(0, 43200, 0)
-        # param = Image.objects.filter(date_saved__range=(datestart, now))
+        now = timezone.now()
+        datestart = now - datetime.timedelta(0, 43200, 0)
+        param = Image.objects.filter(date_saved__range=(datestart, now))
+        if not param:
+            def curiosityrover():
+                x = random.randint(1,1980)
+                y = random.randint(0,25)
+                url = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol="+`x`+"&page=1"
+                app_token = "ApEztOfnuLutAfibTJmSuorcTQMHxQkozbocepVm"
+                payload = {'api_key': app_token}
+                response = requests.get(url, payload)
+                data = response.json()
+                image = data['photos'][y]
+                return image
 
-        def curiosityrover():
-            url = "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&page=1"
-            app_token = "ApEztOfnuLutAfibTJmSuorcTQMHxQkozbocepVm"
-            payload = {'api_key': app_token}
-            response = requests.get(url, payload)
-            data = response.json()
-            image = data['photos'][0]
-            return image
+            image = curiosityrover()
+            mod = Image(sol=image['sol'],
+                        earth_date=image['earth_date'],
+                        img_src=image['img_src'],
+                        date_saved=timezone.now(),
+                        )
+            mod.save()
+            context = {
+                'sol': image['sol'],
+                'earth_date': image['earth_date'],
+                'img_src': image['img_src'],
+                'date_saved': timezone.now().isoformat(),
+            }
+            import pdb; pdb.set_trace()
+            return HttpResponse(json.dumps(context), content_type="text/json")
 
-        image = curiosityrover()
-        mod = Image(sol=image['sol'],
-                    earth_date=image['earth_date'],
-                    img_src=image['img_src'],
-                    date_saved=timezone.now(),
-                    )
-        mod.save()
-        context = {
-            'sol': image['sol'],
-            'earth_date': image['earth_date'],
-            'img_src': image['img_src'],
-            'date_saved': timezone.now().isoformat(),
-        }
-        return HttpResponse(json.dumps(context), content_type="text/json")
+        else:
+            image = Image.objects.get(date_saved__range=(datestart, now))
+            context = {
+                'sol': image.sol,
+                'earth_date': image.earth_date,
+                'img_src': image.img_src,
+                'date_saved': image.date_saved.isoformat(),
+            }
+            import pdb; pdb.set_trace()
+            return HttpResponse(json.dumps(context), content_type="text/json")
         # return JsonResponse(context)
