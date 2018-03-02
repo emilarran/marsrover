@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
-from django.views import generic
-from django.views.generic.detail import DetailView
 from django.http import HttpResponse, JsonResponse
 from .models import Image
 import requests
@@ -70,17 +67,15 @@ class Something(View):
                 'img_src': image['img_src'],
                 'date_saved': timezone.now().isoformat(),
             }
-            import pdb; pdb.set_trace()
             return HttpResponse(json.dumps(context), content_type="text/json")
 
         else:
             image = Image.objects.get(date_saved__range=(datestart, now))
             context = {
                 'sol': image.sol,
-                'earth_date': image.earth_date,
+                'earth_date': image.earth_date.isoformat(),
                 'img_src': image.img_src,
                 'date_saved': image.date_saved.isoformat(),
             }
-            import pdb; pdb.set_trace()
             return HttpResponse(json.dumps(context), content_type="text/json")
         # return JsonResponse(context)
